@@ -1,6 +1,10 @@
 name: CI
 
-on: [push, pull_request]
+# on pull requests, and on main after a merge (not twice for each PR)
+on:
+  push:
+    branches: [main]
+  pull_request:
 
 # the CI only needs to read the code
 permissions:
