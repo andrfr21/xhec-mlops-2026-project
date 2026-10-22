@@ -17,3 +17,6 @@ class InputData(BaseModel):
 class PredictionOut(BaseModel):
     rings: float
     age: float
+    # 90% prediction interval for the number of rings
+    rings_low: float
+    rings_high: float

@@ -1,5 +1,6 @@
+import numpy as np
 import pandas as pd
-from sklearn.linear_model import LinearRegression
+from sklearn.base import RegressorMixin
 
 from src.modelling.preprocessing import encode_sex
 from src.web_service.lib.models import InputData
@@ -25,6 +26,14 @@ def build_features(input_data: InputData) -> pd.DataFrame:
     return encode_sex.fn(df)
 
 
-def run_inference(input_data: InputData, model: LinearRegression) -> float:
+def run_inference(input_data: InputData, model: RegressorMixin) -> float:
     """Predict the number of rings of one abalone."""
     return float(model.predict(build_features(input_data))[0])
+
+
+def prediction_interval(rings: float, log_half_width: float) -> tuple[float, float]:
+    """Interval around a prediction, from the conformal half width on the log scale."""
+    center = np.log1p(rings)
+    return float(np.expm1(center - log_half_width)), float(
+        np.expm1(center + log_half_width)
+    )
