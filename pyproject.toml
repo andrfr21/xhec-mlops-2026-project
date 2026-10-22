@@ -12,13 +12,10 @@ description = "X-HEC MLOps Project on Abalone age prediction model"
 requires-python = ">=3.10,<3.12"
 dependencies = [
     "fastapi>=0.150.0",
-    "matplotlib>=3.10.9",
-    "mlflow>=3.17.2",
     "pandas>=2.3.3",
     "prefect>=3.8.8",
     "pydantic>=2.14.1",
     "scikit-learn>=1.7.2",
-    "seaborn>=0.13.2",
     "uvicorn>=0.54.0",
 ]
 
@@ -26,9 +23,12 @@ dependencies = [
 dev = [
     "httpx2>=2.14.0",
     "ipykernel>=7.3.0",
+    "matplotlib>=3.10.9",
+    "mlflow>=3.17.2",
     "pre-commit>=4.6.2",
     "pytest>=9.1.1",
     "ruff>=0.17.2",
+    "seaborn>=0.13.2",
 ]
 
 [tool.uv]

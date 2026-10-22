@@ -32,6 +32,8 @@ cd notebooks
 uv run mlflow ui
 ```
 
+The libraries used only by the notebooks (mlflow, matplotlib, seaborn) are dev dependencies: `uv sync` installs them, but they are not in the Docker image.
+
 ## Train the model
 
 ```bash
