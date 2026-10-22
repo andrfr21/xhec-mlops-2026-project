@@ -3,6 +3,7 @@
 import argparse
 from pathlib import Path
 
+from prefect import flow
 from preprocessing import encode_sex, extract_x_y, load_data
 from training import train_model
 from utils import pickle_object
@@ -10,6 +11,7 @@ from utils import pickle_object
 MODEL_PATH = Path(__file__).parents[1] / "web_service" / "local_objects" / "model.pkl"
 
 
+@flow(name="train-model")
 def main(trainset_path: Path) -> None:
     """Train a model using the data at the given path and save the model (pickle)."""
     # Read data
