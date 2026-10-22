@@ -87,3 +87,11 @@ curl -X POST http://localhost:8000/predict \
 ```
 
 It returns the predicted number of rings and the age (`rings + 1.5`).
+
+## Tests
+
+```bash
+uv run pytest
+```
+
+The tests (in `tests/`) check the preprocessing and the API. They also run in the CI with pre-commit.
