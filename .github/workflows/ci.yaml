@@ -11,16 +11,15 @@ jobs:
         python-version: ["3.11"]
 
     steps:
-      - uses: actions/checkout@v2
-      - name: Set up Python ${{ matrix.python-version }}
-        uses: actions/setup-python@v2
+      - uses: actions/checkout@v7
+      - name: Install uv and Python ${{ matrix.python-version }}
+        uses: astral-sh/setup-uv@v10.3.2
         with:
           python-version: ${{ matrix.python-version }}
+          enable-cache: true
 
       - name: Install dependencies
-        run: |
-          pip install uv
-          uv sync
+        run: uv sync
       - name: Run pre-commit
         run: uv run pre-commit run --all-files
       - name: Run tests
