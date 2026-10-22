@@ -1,1 +1,8 @@
-# Use this module to code a `pickle_object` function. This will be useful to pickle the model (and encoder if need be).
+import pickle
+from typing import Any
+
+
+def pickle_object(obj: Any, path: str) -> None:
+    """Save an object (model, encoder...) in a pickle file."""
+    with open(path, "wb") as f:
+        pickle.dump(obj, f)
