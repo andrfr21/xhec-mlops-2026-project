@@ -69,7 +69,7 @@ uv run prefect config set PREFECT_API_URL=http://localhost:4200/api
 uv run python src/modelling/deployment.py
 ```
 
-The flow runs can be seen in the UI. To start a training run without waiting for Sunday:
+The flow runs can be seen in the UI. Each run also saves its test RMSE in the artifact `model-rmse` (Artifacts tab), so the history of the retrainings is kept. To start a training run without waiting for Sunday:
 
 ```bash
 uv run prefect deployment run "train-model/weekly-training"

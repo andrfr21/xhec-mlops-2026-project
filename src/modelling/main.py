@@ -4,6 +4,7 @@ import argparse
 from pathlib import Path
 
 from prefect import flow, get_run_logger
+from prefect.artifacts import create_table_artifact
 from preprocessing import (
     encode_sex,
     extract_x_y,
@@ -36,6 +37,12 @@ def main(trainset_path: Path) -> float:
     model = train_model(X_train, y_train)
     rmse = evaluate_model(model, X_test, y_test)
     logger.info(f"RMSE on the test set: {rmse:.2f}")
+    # same key at each run, so the prefect UI keeps the history of the RMSE
+    create_table_artifact(
+        key="model-rmse",
+        table=[{"rmse": round(rmse, 3), "train_rows": len(X_train)}],
+        description="RMSE of the model on the test set",
+    )
 
     # Pickle model
     pickle_object(model, MODEL_PATH)
