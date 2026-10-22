@@ -1,6 +1,10 @@
+import os
+import shutil
+
 import pytest
 from fastapi.testclient import TestClient
 
+from src.web_service import main
 from src.web_service.main import app
 
 client = TestClient(app)
@@ -17,9 +21,26 @@ ABALONE = {
 }
 
 
+@pytest.fixture
+def model_copy(tmp_path, monkeypatch):
+    """Use a copy of the model files, so a test can change or delete them."""
+    for path in [main.MODEL_PATH, main.INTERVAL_PATH]:
+        shutil.copy(path, tmp_path / path.name)
+    monkeypatch.setattr(main, "MODEL_PATH", tmp_path / main.MODEL_PATH.name)
+    monkeypatch.setattr(main, "INTERVAL_PATH", tmp_path / main.INTERVAL_PATH.name)
+    monkeypatch.setattr(main, "_loaded", {})
+    return tmp_path
+
+
 def test_home():
     response = client.get("/")
     assert response.status_code == 200
+
+
+def test_model_info():
+    response = client.get("/model")
+    assert response.status_code == 200
+    assert response.json()["model"] == "HistGradientBoostingRegressor"
 
 
 def test_predict():
@@ -46,3 +67,17 @@ def test_predict_missing_field():
 def test_predict_measurement_not_positive(value):
     response = client.post("/predict", json={**ABALONE, "height": value})
     assert response.status_code == 422
+
+
+def test_predict_without_model(model_copy):
+    (model_copy / "model.pkl").unlink()
+    response = client.post("/predict", json=ABALONE)
+    assert response.status_code == 503
+
+
+def test_new_model_is_loaded_without_restart(model_copy):
+    first = client.get("/model").json()["trained_at"]
+    # same as a new training: the model file is written again later
+    stat = os.stat(model_copy / "model.pkl")
+    os.utime(model_copy / "model.pkl", (stat.st_atime, stat.st_mtime + 3600))
+    assert client.get("/model").json()["trained_at"] != first
