@@ -1,4 +1,4 @@
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from pathlib import Path
 
 from fastapi import FastAPI, HTTPException
@@ -44,7 +44,7 @@ def home() -> dict:
 def model_info() -> dict:
     """Information about the model that is used for the predictions."""
     loaded = get_model()
-    trained_at = datetime.fromtimestamp(loaded["trained_at"], tz=timezone.utc)
+    trained_at = datetime.fromtimestamp(loaded["trained_at"], tz=UTC)
     # the model is wrapped in a TransformedTargetRegressor (log target)
     model = getattr(loaded["model"], "regressor", loaded["model"])
     return {
