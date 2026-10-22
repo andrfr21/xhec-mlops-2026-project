@@ -1,6 +1,49 @@
 import pandas as pd
+import pandera.errors
+import pytest
 
-from src.modelling.preprocessing import encode_sex, extract_x_y, split_train_test
+from src.modelling.preprocessing import (
+    encode_sex,
+    extract_x_y,
+    split_train_test,
+    validate_data,
+)
+
+
+def make_abalones(n: int) -> pd.DataFrame:
+    """n valid abalones (first row of the dataset repeated)."""
+    return pd.DataFrame(
+        {
+            "Sex": ["M"] * n,
+            "Length": [0.455] * n,
+            "Diameter": [0.365] * n,
+            "Height": [0.095] * n,
+            "Whole weight": [0.514] * n,
+            "Shucked weight": [0.2245] * n,
+            "Viscera weight": [0.101] * n,
+            "Shell weight": [0.15] * n,
+            "Rings": [15] * n,
+        }
+    )
+
+
+def test_validate_data_keeps_valid_rows():
+    df = make_abalones(3)
+    assert len(validate_data.fn(df)) == 3
+
+
+def test_validate_data_drops_impossible_rows():
+    df = make_abalones(3)
+    df.loc[1, "Height"] = 0
+    df.loc[2, "Shucked weight"] = 1.0  # heavier than the whole abalone
+    clean = validate_data.fn(df)
+    assert clean.index.tolist() == [0]
+
+
+def test_validate_data_fails_on_missing_column():
+    df = make_abalones(3).drop(columns="Height")
+    with pytest.raises(pandera.errors.SchemaErrors):
+        validate_data.fn(df)
 
 
 def test_encode_sex():
