@@ -1,17 +1,17 @@
 from typing import Literal
 
-from pydantic import BaseModel
+from pydantic import BaseModel, PositiveFloat
 
 
 class InputData(BaseModel):
     sex: Literal["M", "F", "I"]
-    length: float
-    diameter: float
-    height: float
-    whole_weight: float
-    shucked_weight: float
-    viscera_weight: float
-    shell_weight: float
+    length: PositiveFloat
+    diameter: PositiveFloat
+    height: PositiveFloat
+    whole_weight: PositiveFloat
+    shucked_weight: PositiveFloat
+    viscera_weight: PositiveFloat
+    shell_weight: PositiveFloat
 
 
 class PredictionOut(BaseModel):

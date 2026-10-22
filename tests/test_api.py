@@ -39,3 +39,9 @@ def test_predict_missing_field():
     data = {key: value for key, value in ABALONE.items() if key != "shell_weight"}
     response = client.post("/predict", json=data)
     assert response.status_code == 422
+
+
+@pytest.mark.parametrize("value", [0, -0.1])
+def test_predict_measurement_not_positive(value):
+    response = client.post("/predict", json={**ABALONE, "height": value})
+    assert response.status_code == 422
