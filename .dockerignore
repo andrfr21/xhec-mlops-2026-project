@@ -1,0 +1,4 @@
+.venv
+.git
+**/mlruns
+**/mlflow.db
