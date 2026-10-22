@@ -100,7 +100,13 @@ curl -X POST http://localhost:8000/predict \
   -d '{"sex": "M", "length": 0.455, "diameter": 0.365, "height": 0.095, "whole_weight": 0.514, "shucked_weight": 0.2245, "viscera_weight": 0.101, "shell_weight": 0.15}'
 ```
 
-It returns the predicted number of rings and the age (`rings + 1.5`).
+It returns the predicted number of rings, the age (`rings + 1.5`) and a 90% prediction interval for the rings:
+
+```json
+{"rings": 9.23, "age": 10.73, "rings_low": 6.73, "rings_high": 12.56}
+```
+
+The interval comes from split conformal prediction ([Angelopoulos & Bates, arXiv:2107.07511](https://arxiv.org/abs/2107.07511)): the training flow takes the 90% quantile of the errors of the model on the test set (on the log(1 + rings) scale, so the interval is wider for old abalones) and saves it in `src/web_service/local_objects/interval.json`. Over 10 random splits, the real coverage was 90% overall, but 95% for abalones with less than 12 rings and only 74% for the older ones (the model underestimates the oldest abalones). So the interval is reliable on average, not for every age.
 
 ## Tests
 
@@ -115,3 +121,4 @@ The tests (in `tests/`) check the preprocessing and the API. They also run in th
 - Dataset: [Abalone on Kaggle](https://www.kaggle.com/datasets/rodolfomendes/abalone-dataset), originally from the [UCI repository](https://archive.ics.uci.edu/dataset/1/abalone)
 - Ye et al., *A Closer Look at Deep Learning Methods on Tabular Datasets* (TALENT benchmark), [arXiv:2407.00956](https://arxiv.org/abs/2407.00956), [results on abalone](https://github.com/LAMDA-Tabular/TALENT/blob/main/results/regression.md)
 - [Pandera](https://pandera.readthedocs.io) for the data validation
+- Angelopoulos & Bates, *A Gentle Introduction to Conformal Prediction and Distribution-Free Uncertainty Quantification*, [arXiv:2107.07511](https://arxiv.org/abs/2107.07511), for the prediction interval

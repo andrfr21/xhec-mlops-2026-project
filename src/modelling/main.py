@@ -12,10 +12,12 @@ from preprocessing import (
     split_train_test,
     validate_data,
 )
-from training import evaluate_model, train_model
-from utils import pickle_object
+from training import compute_interval, evaluate_model, train_model
+from utils import pickle_object, save_json
 
-MODEL_PATH = Path(__file__).parents[1] / "web_service" / "local_objects" / "model.pkl"
+LOCAL_OBJECTS = Path(__file__).parents[1] / "web_service" / "local_objects"
+MODEL_PATH = LOCAL_OBJECTS / "model.pkl"
+INTERVAL_PATH = LOCAL_OBJECTS / "interval.json"
 
 
 @flow(name="train-model")
@@ -44,8 +46,12 @@ def main(trainset_path: Path) -> float:
         description="RMSE of the model on the test set",
     )
 
-    # Pickle model
+    # 90% prediction interval (split conformal, the test set is the calibration set)
+    half_width = compute_interval(model, X_test, y_test, coverage=0.9)
+
+    # Save the model and the interval for the API
     pickle_object(model, MODEL_PATH)
+    save_json({"coverage": 0.9, "log_half_width": half_width}, INTERVAL_PATH)
     return rmse
 
 
