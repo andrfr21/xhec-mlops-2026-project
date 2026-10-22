@@ -17,6 +17,7 @@ model = load_object(MODEL_PATH)
 
 @app.get("/")
 def home() -> dict:
+    """Health check of the API."""
     return {"health_check": "App up and running!"}
 
 
