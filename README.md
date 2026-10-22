@@ -40,7 +40,7 @@ The libraries used only by the notebooks (mlflow, matplotlib, seaborn) are dev d
 uv run python src/modelling/main.py data/abalone.csv
 ```
 
-This runs the Prefect flow `train-model`: it keeps 20% of the data as a test set, trains the linear regression on the rest, logs the RMSE on the test set (around 2.2 rings) and saves the model in `src/web_service/local_objects/model.pkl`.
+This runs the Prefect flow `train-model`: it validates the data with a [Pandera](https://pandera.readthedocs.io) schema (6 impossible rows are dropped: height of 0, or a part heavier than the whole abalone), keeps 20% of the data as a test set, trains the linear regression on the rest, logs the RMSE on the test set (around 2.2 rings) and saves the model in `src/web_service/local_objects/model.pkl`.
 
 ## Prefect
 
