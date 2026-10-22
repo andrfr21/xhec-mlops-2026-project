@@ -1,16 +1,16 @@
 import pandas as pd
 from sklearn.linear_model import LinearRegression
 
+from src.modelling.preprocessing import encode_sex
 from src.web_service.lib.models import InputData
 
-SEX_CATEGORIES = ["F", "I", "M"]
 
-
-def run_inference(input_data: InputData, model: LinearRegression) -> float:
-    """Predict the number of rings of one abalone."""
+def build_features(input_data: InputData) -> pd.DataFrame:
+    """Build the model features from the API input, like for the training."""
     df = pd.DataFrame(
         [
             {
+                "Sex": input_data.sex,
                 "Length": input_data.length,
                 "Diameter": input_data.diameter,
                 "Height": input_data.height,
@@ -21,7 +21,10 @@ def run_inference(input_data: InputData, model: LinearRegression) -> float:
             }
         ]
     )
-    # same encoding as in src/modelling/preprocessing.py
-    for sex in SEX_CATEGORIES:
-        df[f"Sex_{sex}"] = int(input_data.sex == sex)
-    return float(model.predict(df)[0])
+    # .fn runs the function without the prefect task machinery
+    return encode_sex.fn(df)
+
+
+def run_inference(input_data: InputData, model: LinearRegression) -> float:
+    """Predict the number of rings of one abalone."""
+    return float(model.predict(build_features(input_data))[0])
