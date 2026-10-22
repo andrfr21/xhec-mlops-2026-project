@@ -108,6 +108,8 @@ It returns the predicted number of rings, the age (`rings + 1.5`) and a 90% pred
 
 The interval comes from split conformal prediction ([Angelopoulos & Bates, arXiv:2107.07511](https://arxiv.org/abs/2107.07511)): the training flow takes the 90% quantile of the errors of the model on the test set (on the log(1 + rings) scale, so the interval is wider for old abalones) and saves it in `src/web_service/local_objects/interval.json`. Over 10 random splits, the real coverage was 90% overall, but 95% for abalones with less than 12 rings and only 74% for the older ones (the model underestimates the oldest abalones). So the interval is reliable on average, not for every age.
 
+`GET /model` tells which model is used and when it was trained. The API checks the model files at each request and loads them again when a new training has saved them, so a retraining is used without restarting the API. If there is no model yet, `/predict` answers 503.
+
 ## Tests
 
 ```bash
