@@ -10,4 +10,6 @@ if __name__ == "__main__":
         name="weekly-training",
         cron="0 0 * * 0",
         parameters={"trainset_path": str(DATA_PATH)},
+        # by default the schedule is paused when this process stops (e.g. docker stop)
+        pause_on_shutdown=False,
     )
