@@ -1,6 +1,14 @@
 name: CI
 
-on: [push, pull_request]
+# on pull requests, and on main after a merge (not twice for each PR)
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+# the CI only needs to read the code
+permissions:
+  contents: read
 
 jobs:
   CI:
@@ -19,7 +27,8 @@ jobs:
           enable-cache: true
 
       - name: Install dependencies
-        run: uv sync
+        # --locked: fail if uv.lock is not up to date with pyproject.toml
+        run: uv sync --locked
       - name: Run pre-commit
         run: uv run pre-commit run --all-files
       - name: Run tests
