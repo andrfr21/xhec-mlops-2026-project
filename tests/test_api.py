@@ -28,6 +28,7 @@ def test_predict():
     result = response.json()
     assert result["rings"] > 0
     assert result["age"] == pytest.approx(result["rings"] + 1.5)
+    assert result["rings_low"] < result["rings"] < result["rings_high"]
 
 
 def test_predict_wrong_sex():
