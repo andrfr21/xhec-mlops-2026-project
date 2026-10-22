@@ -17,6 +17,9 @@ dependencies = [
     "prefect>=3.8.8",
     "pydantic>=2.14.1",
     "scikit-learn>=1.7.2",
+    # sqlalchemy 2.1 breaks the scheduler of the prefect server:
+    # https://github.com/PrefectHQ/prefect/issues/23199
+    "sqlalchemy<2.1",
     "uvicorn>=0.54.0",
 ]
 
