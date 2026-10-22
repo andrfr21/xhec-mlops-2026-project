@@ -14,7 +14,7 @@ The repo contains:
 
 ## Setup
 
-You need Python 3.10 or 3.11, [uv](https://docs.astral.sh/uv/getting-started/installation/) and Docker (for the API part).
+You need Python 3.11, [uv](https://docs.astral.sh/uv/getting-started/installation/) and Docker (for the API part). Python 3.10 is not supported: the model is saved with scikit-learn 1.9, which needs Python 3.11, and a pickled model should be loaded with the same scikit-learn version (with 3.10, uv installs scikit-learn 1.7 and it warns that the results could be wrong).
 
 ```bash
 uv sync
