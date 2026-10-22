@@ -11,7 +11,9 @@ authors = [
 description = "X-HEC MLOps Project on Abalone age prediction model"
 requires-python = ">=3.11,<3.12"
 dependencies = [
-    "fastapi>=0.150.0",
+    # fastapi 0.155 removed the **extra arguments of Body that prefect 3.9 still uses:
+    # https://github.com/fastapi/fastapi/pull/16545
+    "fastapi>=0.150.0,<0.155",
     "pandas>=2.3.3",
     "pandera>=0.34.1",
     "prefect>=3.8.8",
