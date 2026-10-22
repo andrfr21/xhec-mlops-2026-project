@@ -25,7 +25,7 @@ The dataset is already in `data/abalone.csv` (it comes from [Kaggle](https://www
 
 ## Notebooks
 
-`notebooks/eda.ipynb` explores the data and `notebooks/modelling.ipynb` trains a first linear regression. The runs of the modelling notebook are tracked with MLflow. To see them:
+`notebooks/eda.ipynb` explores the data and `notebooks/modelling.ipynb` compares the models. The runs of the modelling notebook are tracked with MLflow. To see them:
 
 ```bash
 cd notebooks
@@ -40,7 +40,19 @@ The libraries used only by the notebooks (mlflow, matplotlib, seaborn) are dev d
 uv run python src/modelling/main.py data/abalone.csv
 ```
 
-This runs the Prefect flow `train-model`: it validates the data with a [Pandera](https://pandera.readthedocs.io) schema (6 impossible rows are dropped: height of 0, or a part heavier than the whole abalone), keeps 20% of the data as a test set, trains the linear regression on the rest, logs the RMSE on the test set (around 2.2 rings) and saves the model in `src/web_service/local_objects/model.pkl`.
+This runs the Prefect flow `train-model`: it validates the data with a [Pandera](https://pandera.readthedocs.io) schema (6 impossible rows are dropped: height of 0, or a part heavier than the whole abalone), keeps 20% of the data as a test set, trains the model on the rest, logs the RMSE on the test set (around 2.2 rings) and saves the model in `src/web_service/local_objects/model.pkl`.
+
+### Model choice
+
+The models were compared in `notebooks/modelling.ipynb` with a 5-fold cross-validation repeated 5 times (a single 836-row test set is too noisy to see a difference of a few %):
+
+| Model | RMSE (rings) | MAE (rings) |
+|---|---|---|
+| Linear regression | 2.21 | 1.58 |
+| Random forest | 2.16 | 1.52 |
+| Gradient boosting on log(1 + rings) | **2.15** | **1.49** |
+
+Gradient boosting (scikit-learn `HistGradientBoostingRegressor`) is the model used by the training flow. The gain over the linear regression (-3% RMSE, -6% MAE) is in line with the TALENT benchmark for abalone (2.24 for linear regression, 2.16 to 2.18 for tuned tree models).
 
 ## Prefect
 
@@ -97,3 +109,9 @@ uv run pytest
 ```
 
 The tests (in `tests/`) check the preprocessing and the API. They also run in the CI with pre-commit.
+
+## References
+
+- Dataset: [Abalone on Kaggle](https://www.kaggle.com/datasets/rodolfomendes/abalone-dataset), originally from the [UCI repository](https://archive.ics.uci.edu/dataset/1/abalone)
+- Ye et al., *A Closer Look at Deep Learning Methods on Tabular Datasets* (TALENT benchmark), [arXiv:2407.00956](https://arxiv.org/abs/2407.00956), [results on abalone](https://github.com/LAMDA-Tabular/TALENT/blob/main/results/regression.md)
+- [Pandera](https://pandera.readthedocs.io) for the data validation
