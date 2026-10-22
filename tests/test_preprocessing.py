@@ -1,6 +1,6 @@
 import pandas as pd
 
-from src.modelling.preprocessing import encode_sex, extract_x_y
+from src.modelling.preprocessing import encode_sex, extract_x_y, split_train_test
 
 
 def test_encode_sex():
@@ -19,3 +19,12 @@ def test_extract_x_y():
     X, y = extract_x_y.fn(df)
     assert list(X.columns) == ["Length"]
     assert y.tolist() == [10, 8]
+
+
+def test_split_train_test():
+    X = pd.DataFrame({"Length": range(10)})
+    y = pd.Series(range(10))
+    X_train, X_test, y_train, y_test = split_train_test.fn(X, y)
+    assert len(X_train) == len(y_train) == 8
+    assert len(X_test) == 2
+    assert list(X_test.index) == list(y_test.index)
