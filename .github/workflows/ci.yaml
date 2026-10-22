@@ -50,3 +50,9 @@ jobs:
           push: false
           cache-from: type=gha
           cache-to: type=gha,mode=max
+      - name: Check that the API answers in the container
+        run: |
+          docker run -d --init -p 8000:8001 abalone-api:ci
+          for i in $(seq 1 60); do curl -sf http://localhost:8000/ && break; sleep 2; done
+          curl -sf -X POST http://localhost:8000/predict -H "Content-Type: application/json" \
+            -d '{"sex": "M", "length": 0.455, "diameter": 0.365, "height": 0.095, "whole_weight": 0.514, "shucked_weight": 0.2245, "viscera_weight": 0.101, "shell_weight": 0.15}'
