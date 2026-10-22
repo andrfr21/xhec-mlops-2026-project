@@ -7,6 +7,48 @@
 [![Pre-commit](https://img.shields.io/badge/pre--commit-enabled-informational?logo=pre-commit&logoColor=white)](https://github.com/artefactory/xhec-mlops-project-student/blob/main/.pre-commit-config.yaml)
 </div>
 
+## Team
+
+- Francois Andreani ([andrfr21](https://github.com/andrfr21))
+
+## Environment setup
+
+```bash
+uv sync
+uv run pre-commit install
+```
+
+## Train the model
+
+The dataset is in `data/abalone.csv` (downloaded from [Kaggle](https://www.kaggle.com/datasets/rodolfomendes/abalone-dataset)).
+
+```bash
+uv run python src/modelling/main.py data/abalone.csv
+```
+
+The model is saved in `src/web_service/local_objects/model.pkl`.
+
+## Prefect
+
+Start the Prefect server (the UI is on http://localhost:4200):
+
+```bash
+uv run prefect server start
+```
+
+In another terminal, start the deployment that retrains the model every Sunday at midnight:
+
+```bash
+uv run prefect config set PREFECT_API_URL=http://localhost:4200/api
+uv run python src/modelling/deployment.py
+```
+
+The flow runs can be seen in the UI. To start a training run without waiting for Sunday:
+
+```bash
+uv run prefect deployment run "train-model/weekly-training"
+```
+
 ## 🎯 Project Overview
 
 Welcome to your MLOps project! In this hands-on project, you'll build a complete machine learning system to predict the age of abalone (a type of sea snail) using physical measurements instead of the traditional time-consuming method of counting shell rings under a microscope.
@@ -17,7 +59,7 @@ Welcome to your MLOps project! In this hands-on project, you'll build a complete
 
 Traditionally, determining an abalone's age requires:
 1. Cutting the shell through the cone
-2. Staining it 
+2. Staining it
 3. Counting rings under a microscope (very time-consuming!)
 
 **Your Goal**: Use easier-to-obtain physical measurements (shell weight, diameter, etc.) to predict the age automatically.
@@ -34,15 +76,15 @@ Traditionally, determining an abalone's age requires:
 
 ### Setup Steps
 
-1. **Fork this repository** 
+1. **Fork this repository**
    - ⚠️ **Important**: Uncheck "Copy the `main` branch only" to get all project branches
-   
+
 2. **Add your team members** as admins to your forked repository
 
 3. **Set up your development environment**:
    ```bash
    # Create and activate a virtual environment
-   uv sync 
+   uv sync
    source venv/bin/activate # on Windows: venv\Scripts\activate
 
    # Install pre-commit hooks for code quality
@@ -54,7 +96,7 @@ Traditionally, determining an abalone's age requires:
 
 By the end of this project, you'll have created:
 
-### 🤖 **Automated ML Pipeline** 
+### 🤖 **Automated ML Pipeline**
 - Training workflows using Prefect
 - Automatic model retraining on schedule
 - Reproducible model and data processing
@@ -67,7 +109,7 @@ By the end of this project, you'll have created:
 ### 📊 **Production-Ready Code**
 - Clean, well-documented code
 - Automated testing and formatting
-- Proper error handling 
+- Proper error handling
 
 ## 📝 How to Work on This Project
 
@@ -102,7 +144,7 @@ git push
 
 Then:
 1. 📖 Read the PR_i.md file carefully
-2. 💻 Complete all the TODOs in the code  
+2. 💻 Complete all the TODOs in the code
 3. 🔧 Test your changes
 4. 📤 Open **ONE** pull request to your main branch
 5. ✅ Merge the pull request
@@ -147,16 +189,16 @@ uv sync
 
 Your project will be evaluated on:
 
-### 🔍 **Code Quality** 
+### 🔍 **Code Quality**
 - Clean, readable code structure
-- Proper naming conventions  
+- Proper naming conventions
 - Good use of docstrings and type hints
 
 ### 🎨 **Code Formatting**
 - Consistent style (automated with pre-commit)
 - Professional presentation
 
-### ⚙️ **Functionality** 
+### ⚙️ **Functionality**
 - Code runs without errors
 - All requirements implemented correctly
 
@@ -177,10 +219,10 @@ When you're done, your repository should contain:
 
 ✅ **Automated Training Pipeline**
 - [ ] Prefect workflows for model training
-- [ ] Separate modules for training and inference  
+- [ ] Separate modules for training and inference
 - [ ] Reproducible model and encoder generation
 
-✅ **Automated Deployment**  
+✅ **Automated Deployment**
 - [ ] Prefect deployment for regular retraining
 
 ✅ **Production API**
