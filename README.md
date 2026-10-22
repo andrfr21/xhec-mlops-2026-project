@@ -18,6 +18,37 @@ uv sync
 uv run pre-commit install
 ```
 
+## Train the model
+
+The dataset is in `data/abalone.csv` (downloaded from [Kaggle](https://www.kaggle.com/datasets/rodolfomendes/abalone-dataset)).
+
+```bash
+uv run python src/modelling/main.py data/abalone.csv
+```
+
+The model is saved in `src/web_service/local_objects/model.pkl`.
+
+## Prefect
+
+Start the Prefect server (the UI is on http://localhost:4200):
+
+```bash
+uv run prefect server start
+```
+
+In another terminal, start the deployment that retrains the model every Sunday at midnight:
+
+```bash
+uv run prefect config set PREFECT_API_URL=http://localhost:4200/api
+uv run python src/modelling/deployment.py
+```
+
+The flow runs can be seen in the UI. To start a training run without waiting for Sunday:
+
+```bash
+uv run prefect deployment run "train-model/weekly-training"
+```
+
 ## 🎯 Project Overview
 
 Welcome to your MLOps project! In this hands-on project, you'll build a complete machine learning system to predict the age of abalone (a type of sea snail) using physical measurements instead of the traditional time-consuming method of counting shell rings under a microscope.
