@@ -17,3 +17,4 @@ def save_json(data: dict, path: str) -> None:
     """Save a dict in a json file."""
     with open(path, "w") as f:
         json.dump(data, f, indent=2)
+        f.write("\n")
