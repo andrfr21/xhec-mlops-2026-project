@@ -83,14 +83,16 @@ Run it locally:
 uv run uvicorn src.web_service.main:app --port 8001
 ```
 
-Or with Docker (the container runs the API and a Prefect server):
+Or with Docker. The container runs the API, a Prefect server and the weekly training deployment, so the retraining also happens in the container:
 
 ```bash
 docker build -t abalone-api -f Dockerfile.app .
-docker run -p 0.0.0.0:8000:8001 -p 0.0.0.0:4200:4201 abalone-api
+docker run --init -p 0.0.0.0:8000:8001 -p 0.0.0.0:4200:4201 abalone-api
 ```
 
-With Docker, the API is on http://localhost:8000 (docs on http://localhost:8000/docs) and the Prefect UI on http://localhost:4200.
+With Docker, the API is on http://localhost:8000 (docs on http://localhost:8000/docs) and the Prefect UI on http://localhost:4200. The `weekly-training` deployment can also be started by hand from the UI (Run > Quick run): the API uses the new model as soon as the training is done (`GET /model` shows the training time).
+
+The local Prefect server of the [Prefect](#prefect) section also uses the port 4200, so stop it before `docker run`. `--init` lets `docker stop` stop all the processes of the container cleanly.
 
 Example of prediction:
 
