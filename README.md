@@ -38,7 +38,7 @@ uv run mlflow ui
 uv run python src/modelling/main.py data/abalone.csv
 ```
 
-This runs the Prefect flow `train-model` and saves the model in `src/web_service/local_objects/model.pkl`.
+This runs the Prefect flow `train-model`: it keeps 20% of the data as a test set, trains the linear regression on the rest, logs the RMSE on the test set (around 2.2 rings) and saves the model in `src/web_service/local_objects/model.pkl`.
 
 ## Prefect
 
