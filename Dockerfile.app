@@ -35,6 +35,8 @@ ENV PATH="/app/.venv/bin:$PATH"
 # the UI (port 4201 mapped on 4200 of the host) calls the API through the host port
 ENV PREFECT_API_URL=http://127.0.0.1:4201/api
 ENV PREFECT_UI_API_URL=http://localhost:4200/api
+# the prefect server copies its UI files at startup; the app user cannot write in the venv
+ENV PREFECT_SERVER_UI_STATIC_DIRECTORY=/home/app/.prefect/ui
 
 # 8001: API, 4201: prefect UI
 EXPOSE 8001 4201
