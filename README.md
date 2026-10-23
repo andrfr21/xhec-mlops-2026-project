@@ -123,7 +123,7 @@ The interval comes from split conformal prediction ([Angelopoulos & Bates, arXiv
 uv run pytest
 ```
 
-The tests (in `tests/`) check the preprocessing and the API. They also run in the CI with pre-commit.
+The tests (in `tests/`) check the preprocessing and the API. They also run in the CI with pre-commit. pre-commit also checks the type hints with [mypy](https://mypy-lang.org) (`uv run mypy src tests`).
 
 ## References
 
