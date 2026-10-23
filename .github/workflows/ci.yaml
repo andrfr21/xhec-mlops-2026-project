@@ -60,6 +60,8 @@ jobs:
         run: |
           for i in $(seq 1 90); do curl -sf http://localhost:4200/api/health && break; sleep 2; done
           curl -sf http://localhost:4200/api/health
+      - name: Check that the prefect UI is served
+        run: curl -sf http://localhost:4200/ > /dev/null
       - name: Show the container logs
         if: failure()
         run: docker logs abalone
