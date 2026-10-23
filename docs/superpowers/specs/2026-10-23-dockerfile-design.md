@@ -22,7 +22,7 @@ Date: 2026-10-23. Made with the Superpowers brainstorming skill.
 
 **Build stage** (`python:3.11-slim AS builder`):
 - uv binary copied from `ghcr.io/astral-sh/uv:0.12.21` (same version as the one used to make `uv.lock`, so `--locked` does not see a format change).
-- `UV_COMPILE_BYTECODE=1`, `UV_LINK_MODE=copy`.
+- `UV_LINK_MODE=copy` (`UV_COMPILE_BYTECODE=1` was planned, then removed after measurement: see the last section).
 - `uv sync --locked --no-dev --no-install-project`, with `uv.lock` and `pyproject.toml` bind-mounted and a cache mount for the uv cache.
 
 **Final stage** (`python:3.11-slim`, same base so the virtualenv's python path is valid):
@@ -35,7 +35,7 @@ Date: 2026-10-23. Made with the Superpowers brainstorming skill.
 
 ## Verification
 
-- Build, then compare the image size with the current one (808 MB).
+- Build, then compare the image size with the current one (805 MB).
 - `docker exec ... whoami` returns `app`; no `pip`/`uv` in the final image.
 - `docker inspect` health status becomes `healthy`.
 - A training run started in the container (`prefect deployment run`) completes and rewrites the model as the `app` user.
@@ -45,3 +45,13 @@ Date: 2026-10-23. Made with the Superpowers brainstorming skill.
 ## Out of scope
 
 Persisting the model and the Prefect database outside the container (volumes), and splitting the services. Both are listed as remaining concerns in `.planning/codebase/CONCERNS.md`.
+
+## What changed during the implementation
+
+Found with the Superpowers systematic-debugging skill (measure first, one change at a time):
+
+1. **Bytecode.** The first build was 972 MB, more than the old image (805 MB). Cause: `UV_COMPILE_BYTECODE=1` writes 8,897 `.pyc` files (venv 588 MB vs 404 MB). Same image without it: 722 MB, and the API answers after about 19 s instead of 10 s (3 runs each). The smaller image wins here, so `UV_COMPILE_BYTECODE` was removed.
+2. **pip.** pip comes with the base image, so it is removed in the final stage. Running Python in that step wrote `.pyc` files of the standard library (+8 MB); `python -B` avoids it (the layer is 94 kB).
+3. **Prefect UI.** As the `app` user, the Prefect server could not copy its UI files into the venv (`Errno 13`), and the UI on port 4200 answered 404. The CI did not see it because it only checked `/api/health`. A CI check of the UI was added first (failing), then `PREFECT_SERVER_UI_STATIC_DIRECTORY=/home/app/.prefect/ui` fixed it.
+
+Results: 722 MB image (805 MB before), user `app`, no pip or uv, `healthy` status, UI 200, a training run in the container completes and the API reloads the new model, `docker stop` in 2 s.
