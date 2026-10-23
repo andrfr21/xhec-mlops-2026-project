@@ -97,6 +97,8 @@ In both cases the API is on http://localhost:8000 (docs on http://localhost:8000
 
 The local API and the local Prefect server of the [Prefect](#prefect) section use the same ports (8000 and 4200), so stop them before `docker run`. `--init` lets `docker stop` stop all the processes of the container cleanly.
 
+The image is built in two stages with uv (the final image only has the virtualenv, no pip or uv), runs as a non-root user and has a healthcheck on the API (`docker ps` shows `healthy`). The design and the measurements are in `docs/superpowers/specs/2026-10-23-dockerfile-design.md`.
+
 Example of prediction:
 
 ```bash
