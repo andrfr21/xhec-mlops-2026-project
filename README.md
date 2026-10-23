@@ -125,6 +125,17 @@ uv run pytest
 
 The tests (in `tests/`) check the preprocessing and the API. They also run in the CI with pre-commit. pre-commit also checks the type hints with [mypy](https://mypy-lang.org) (`uv run mypy src tests`).
 
+## How I worked
+
+I used an AI coding agent (Claude Code) on this project, as the course encourages ("AI is not prohibited", session of 21 October). Once the course steps were done, I used it to see how far the quality of the project could go:
+
+- one GitHub issue per problem found, then one PR per issue with tests and CI, following the course advice of "agents for each step, triggered by humans";
+- an AI-assisted literature scan for the model choice and the prediction interval (sources in [References](#references));
+- an independent AI review of the repository, graded like a class project, then a fix of the two README steps it found broken (PR #42);
+- two of the tools presented in class: [GSD](https://github.com/gsd-build/get-shit-done) to map the codebase (`.planning/codebase/`, PR #43), and [Superpowers](https://github.com/obra/superpowers) for the Docker image (brainstorming for the design in `docs/superpowers/specs/`, then systematic debugging when the measurements did not match the plan, PR #44).
+
+I set the goals and made the decisions along the way, and I can explain every change: the reasons are in the issue and PR descriptions.
+
 ## References
 
 - Dataset: [Abalone on Kaggle](https://www.kaggle.com/datasets/rodolfomendes/abalone-dataset), originally from the [UCI repository](https://archive.ics.uci.edu/dataset/1/abalone)
