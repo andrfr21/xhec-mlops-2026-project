@@ -37,7 +37,7 @@ The libraries used only by the notebooks (mlflow, matplotlib, seaborn) are dev d
 ## Train the model
 
 ```bash
-uv run python src/modelling/main.py data/abalone.csv
+uv run python -m src.modelling.main data/abalone.csv
 ```
 
 This runs the Prefect flow `train-model`: it validates the data with a [Pandera](https://pandera.readthedocs.io) schema (6 impossible rows are dropped: height of 0, or a part heavier than the whole abalone), keeps 20% of the data as a test set, trains the model on the rest, logs the RMSE on the test set (around 2.2 rings) and saves the model in `src/web_service/local_objects/model.pkl`.
@@ -66,7 +66,7 @@ In another terminal, start the deployment that retrains the model every Sunday a
 
 ```bash
 export PREFECT_API_URL=http://localhost:4200/api
-uv run python src/modelling/deployment.py
+uv run python -m src.modelling.deployment
 ```
 
 The flow runs can be seen in the UI. Each run also saves its test RMSE in the artifact `model-rmse` (Artifacts tab), so the history of the retrainings is kept. To start a training run without waiting for Sunday, in a third terminal:
@@ -123,7 +123,7 @@ The interval comes from split conformal prediction ([Angelopoulos & Bates, arXiv
 uv run pytest
 ```
 
-The tests (in `tests/`) check the preprocessing and the API. They also run in the CI with pre-commit.
+The tests (in `tests/`) check the preprocessing and the API. They also run in the CI with pre-commit. pre-commit also checks the type hints with [mypy](https://mypy-lang.org) (`uv run mypy src tests`).
 
 ## References
 

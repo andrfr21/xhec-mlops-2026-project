@@ -7,7 +7,7 @@ prefect server start --host 0.0.0.0 --port 4201 &
     until python -c "import urllib.request; urllib.request.urlopen('$PREFECT_API_URL/health')" 2>/dev/null; do
         sleep 1
     done
-    python src/modelling/deployment.py
+    python -m src.modelling.deployment
 ) &
 
 # the API does not wait for prefect
