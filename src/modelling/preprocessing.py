@@ -1,3 +1,5 @@
+from pathlib import Path
+
 import pandas as pd
 import pandera.pandas as pa
 from prefect import task
@@ -29,7 +31,7 @@ ABALONE_SCHEMA = pa.DataFrameSchema(
 
 
 @task
-def load_data(path: str) -> pd.DataFrame:
+def load_data(path: str | Path) -> pd.DataFrame:
     """Read the abalone csv file."""
     return pd.read_csv(path)
 
