@@ -62,18 +62,21 @@ Start the Prefect server (the UI is on http://localhost:4200):
 uv run prefect server start
 ```
 
-In another terminal, start the deployment that retrains the model every Sunday at midnight:
+In another terminal, start the deployment that retrains the model every Sunday at midnight (`PREFECT_API_URL` tells it to use this server):
 
 ```bash
-uv run prefect config set PREFECT_API_URL=http://localhost:4200/api
+export PREFECT_API_URL=http://localhost:4200/api
 uv run python src/modelling/deployment.py
 ```
 
-The flow runs can be seen in the UI. Each run also saves its test RMSE in the artifact `model-rmse` (Artifacts tab), so the history of the retrainings is kept. To start a training run without waiting for Sunday:
+The flow runs can be seen in the UI. Each run also saves its test RMSE in the artifact `model-rmse` (Artifacts tab), so the history of the retrainings is kept. To start a training run without waiting for Sunday, in a third terminal:
 
 ```bash
+export PREFECT_API_URL=http://localhost:4200/api
 uv run prefect deployment run "train-model/weekly-training"
 ```
+
+On Windows PowerShell, replace the `export` line with `$env:PREFECT_API_URL = "http://localhost:4200/api"`. The variable only exists in the terminal where it is set, so the training script of the previous section still works without a server in a new terminal (`prefect config set` would change it for every terminal).
 
 ## API
 
