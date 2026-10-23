@@ -17,7 +17,8 @@ RUN --mount=type=cache,target=/root/.cache/uv \
 # --- final image: only the virtualenv, the code and the data, no pip/uv, not root ---
 FROM python:3.11-slim
 
-RUN useradd --create-home app
+# pip comes with the base image but is not needed at runtime
+RUN python -B -m pip uninstall -y pip && useradd --create-home app
 WORKDIR /app
 
 COPY --from=builder /app/.venv /app/.venv
