@@ -1,19 +1,21 @@
 # This module is the training flow: it reads the data, preprocesses it, trains a model and saves it.
+# Run it from the root of the repo: python -m src.modelling.main data/abalone.csv
 
 import argparse
 from pathlib import Path
 
 from prefect import flow, get_run_logger
 from prefect.artifacts import create_table_artifact
-from preprocessing import (
+
+from src.modelling.preprocessing import (
     encode_sex,
     extract_x_y,
     load_data,
     split_train_test,
     validate_data,
 )
-from training import compute_interval, evaluate_model, train_model
-from utils import pickle_object, save_json
+from src.modelling.training import compute_interval, evaluate_model, train_model
+from src.modelling.utils import pickle_object, save_json
 
 LOCAL_OBJECTS = Path(__file__).parents[1] / "web_service" / "local_objects"
 MODEL_PATH = LOCAL_OBJECTS / "model.pkl"

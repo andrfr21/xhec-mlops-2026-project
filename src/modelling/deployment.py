@@ -1,6 +1,7 @@
+# Run it from the root of the repo: python -m src.modelling.deployment
 from pathlib import Path
 
-from main import main
+from src.modelling.main import main
 
 DATA_PATH = Path(__file__).parents[2] / "data" / "abalone.csv"
 
